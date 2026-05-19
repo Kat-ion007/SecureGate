@@ -7,8 +7,8 @@ import { z } from "zod";
 
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
 type FormErrors = {
@@ -34,15 +34,9 @@ export default function SignupPage() {
       return;
     }
 
-    let score = 0;
-    if (password.length >= 8) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
-
-    if (score <= 1) {
+    if (password.length < 8) {
       setStrength("Weak");
-    } else if (score === 2 || score === 3) {
+    } else if (!/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
       setStrength("Fair");
     } else {
       setStrength("Strong");
@@ -83,8 +77,9 @@ export default function SignupPage() {
         return;
       }
 
-      // Successfully registered, redirect to login
-      router.push("/login?registered=true");
+      // Account created; redirect to verify-pending (email may or may not have been sent)
+      const query = data.emailSent === false ? "&emailFailed=true" : "";
+      router.push(`/verify-pending?email=${encodeURIComponent(email)}${query}`);
     } catch {
       setErrors({ general: "A network error occurred. Please try again." });
       setLoading(false);
@@ -145,7 +140,7 @@ export default function SignupPage() {
               type="text"
               className={`w-full bg-slate-950/80 border ${
                 errors.name ? "border-red-500/50" : "border-slate-800"
-              } focus:border-indigo-500 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors`}
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors`}
               placeholder="John Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -164,7 +159,7 @@ export default function SignupPage() {
               type="email"
               className={`w-full bg-slate-950/80 border ${
                 errors.email ? "border-red-500/50" : "border-slate-800"
-              } focus:border-indigo-500 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors`}
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors`}
               placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -183,7 +178,7 @@ export default function SignupPage() {
               type="password"
               className={`w-full bg-slate-950/80 border ${
                 errors.password ? "border-red-500/50" : "border-slate-800"
-              } focus:border-indigo-500 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors`}
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors`}
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

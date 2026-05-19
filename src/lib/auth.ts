@@ -43,6 +43,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           name: user.name,
           email: user.email,
+          emailVerified: user.emailVerified,
         };
       },
     }),
@@ -51,12 +52,24 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.emailVerified = (user as { emailVerified?: Date | null }).emailVerified
+          ? new Date((user as { emailVerified?: Date | null }).emailVerified!).toISOString()
+          : null;
+      } else if (token.id && !token.emailVerified) {
+        const dbUser = await db.user.findUnique({
+          where: { id: token.id as string },
+          select: { emailVerified: true },
+        });
+        if (dbUser?.emailVerified) {
+          token.emailVerified = dbUser.emailVerified.toISOString();
+        }
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as { id?: string }).id = token.id as string;
+        (session.user as { id?: string; emailVerified?: string | null }).id = token.id as string;
+        (session.user as { id?: string; emailVerified?: string | null }).emailVerified = token.emailVerified as string | null;
       }
       return session;
     },

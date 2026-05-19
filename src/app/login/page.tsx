@@ -18,6 +18,12 @@ function LoginForm() {
     if (searchParams.get("registered") === "true") {
       setSuccess("Account created successfully! Please log in.");
     }
+    if (searchParams.get("passwordReset") === "true") {
+      setSuccess("Password reset successfully. You can now log in with your new password.");
+    }
+    if (searchParams.get("verified") === "true") {
+      setSuccess("Email verified successfully! You can now log in.");
+    }
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,8 +32,14 @@ function LoginForm() {
     setSuccess("");
     setLoading(true);
 
-    if (!email || !password) {
-      setError("Invalid email or password");
+    if (!email) {
+      setError("Please enter your email address");
+      setLoading(false);
+      return;
+    }
+
+    if (!password) {
+      setError("Please enter your password");
       setLoading(false);
       return;
     }
@@ -39,8 +51,20 @@ function LoginForm() {
         redirect: false,
       });
 
-      if (!res || res.error) {
+      if (!res) {
+        setError("Unable to sign in. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      if (res.error === "CredentialsSignin") {
         setError("Invalid email or password");
+        setLoading(false);
+        return;
+      }
+
+      if (res.error) {
+        setError(res.error);
         setLoading(false);
         return;
       }
@@ -48,7 +72,7 @@ function LoginForm() {
       router.push("/dashboard");
       router.refresh();
     } catch {
-      setError("Invalid email or password");
+      setError("A network error occurred. Please try again.");
       setLoading(false);
     }
   };
@@ -84,7 +108,7 @@ function LoginForm() {
           <input
             id="email"
             type="email"
-            className="w-full bg-slate-950/80 border border-slate-800 focus:border-indigo-500 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors"
+            className="w-full bg-slate-950/80 border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors"
             placeholder="name@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -98,7 +122,7 @@ function LoginForm() {
           <input
             id="password"
             type="password"
-            className="w-full bg-slate-950/80 border border-slate-800 focus:border-indigo-500 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors"
+            className="w-full bg-slate-950/80 border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -124,7 +148,16 @@ function LoginForm() {
         </button>
       </form>
 
-      <p className="text-center text-slate-400 text-sm mt-8">
+        <div className="text-center mt-6">
+          <Link
+            href="/forgot-password"
+            className="text-sm text-slate-400 hover:text-indigo-400 transition-colors"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
+        <p className="text-center text-slate-400 text-sm mt-8">
         {"Don't have an account?"}{" "}
         <Link href="/signup" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
           Sign Up

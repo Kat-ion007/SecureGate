@@ -11,12 +11,17 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@react-email/components": "^1.0.12",
+    "@react-email/render": "^2.0.8",
+    "@upstash/ratelimit": "1.2",
+    "@upstash/redis": "^1.38.0",
     "bcryptjs": "^3.0.3",
     "next": "14.2.35",
     "next-auth": "^4.24.14",
     "pg": "^8.21.0",
     "react": "^18",
     "react-dom": "^18",
+    "resend": "^6.12.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -33,9 +33,18 @@ export default async function DashboardPage() {
             <SignOutButton />
           </div>
 
+          <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-5 mb-6">
+            <p className="text-indigo-300 text-lg font-semibold">
+              Welcome back{name ? `, ${name}` : ""}! 👋
+            </p>
+            <p className="text-indigo-400/70 text-sm mt-1">
+              You are securely signed in to your SecureGate account.
+            </p>
+          </div>
+
           <div className="bg-slate-950/50 border border-slate-800/80 rounded-xl p-6 space-y-4">
             <h2 className="text-lg font-semibold text-slate-200">
-              User Profile Information
+              Account Details
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-4 bg-slate-900/60 rounded-lg border border-slate-800">
