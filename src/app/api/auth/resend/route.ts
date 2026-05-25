@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 import VerificationEmail from "@/components/emails/VerificationEmail";
+import { getAppUrl } from "@/lib/app-url";
 
 export async function POST(req: Request) {
   try {
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
         }),
       ]);
 
-      const verifyUrl = `${process.env.APP_URL || "http://localhost:3000"}/verify-email/${token}`;
+      const verifyUrl = `${getAppUrl()}/verify-email/${token}`;
       console.log(`\n=== Verification URL (dev fallback) ===`);
       console.log(verifyUrl);
       console.log(`========================================\n`);

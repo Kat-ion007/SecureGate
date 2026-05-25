@@ -5,6 +5,7 @@ import { Resend } from "resend";
 import { render } from "@react-email/render";
 import PasswordResetEmail from "@/components/emails/PasswordResetEmail";
 import { forgotPasswordRateLimit } from "@/lib/rate-limiter";
+import { getAppUrl } from "@/lib/app-url";
 
 export async function POST(req: Request) {
   try {
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
         }),
       ]);
 
-      const resetUrl = `${process.env.APP_URL || "http://localhost:3000"}/reset-password/${token}`;
+      const resetUrl = `${getAppUrl()}/reset-password/${token}`;
       console.log(`\n=== Password Reset URL (dev fallback) ===`);
       console.log(resetUrl);
       console.log(`=========================================\n`);

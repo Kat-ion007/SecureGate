@@ -6,6 +6,7 @@ import crypto from "crypto";
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 import VerificationEmail from "@/components/emails/VerificationEmail";
+import { getAppUrl } from "@/lib/app-url";
 
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
     });
 
     let emailSent = true;
-    const verifyUrl = `${process.env.APP_URL || "http://localhost:3000"}/verify-email/${result.token}`;
+    const verifyUrl = `${getAppUrl()}/verify-email/${result.token}`;
     console.log(`\n=== Verification URL (dev fallback) ===`);
     console.log(verifyUrl);
     console.log(`========================================\n`);
